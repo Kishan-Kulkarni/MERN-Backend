@@ -58,13 +58,12 @@ app.post('/user', async (req, res)=>{
 app.get('/post/:postId', async (req,res)=>{
   const postid=req.params.postId
   const post = await Post.findById({_id:postid})
-  console.log(post)
   res.json({post:post})
 })
 
 app.get('/', async (req, res) => {
 	const token = req.headers['x-access-token']
-  console.log(token);
+  
 
 	try {
 		const decoded = jwt.verify(token, secret)
@@ -117,7 +116,7 @@ app.post('/post', async (req,res)=>{
       image:image,
       content:content,}
     )
-    console.log(postDoc);
+    
      res.json({posted:true})
   } catch (error) {
      console.log(error)
@@ -126,7 +125,7 @@ app.post('/post', async (req,res)=>{
 
 app.get('/post' , async (req, res)=>{
   const data=await Post.find()
-  console.log(data);
+  
   res.json({status:"ok", posts:data})
 })
 
