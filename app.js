@@ -137,17 +137,10 @@ app.post('/edit', async (req, res)=>{
   res.json({post:data})
 })
 
-app.put('/post' ,uploadMiddleware.single('file') , async (req, res)=>{
-  let newPath = null;
-  if (req.file) {
-    const {originalname,path} = req.file;
-    const parts = originalname.split('.');
-    const ext = parts[parts.length - 1];
-    newPath = path+'.'+ext;
-    fs.renameSync(path, newPath);
-  }
+app.put('/post' , async (req, res)=>{
+  
 
-  const {id,title,summary,content,_id} = req.body
+  const {id,title,summary,content,_id, image} = req.body
   const post=await Post.findById(_id)
   try {
     const postDoc = await Post.findByIdAndUpdate(_id, {
@@ -155,7 +148,7 @@ app.put('/post' ,uploadMiddleware.single('file') , async (req, res)=>{
       title,
       summary,
       content,
-      image: newPath ? newPath : post.image,
+      image: image
     })
     res.json(postDoc)
   } catch (error) {
