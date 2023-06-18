@@ -23,7 +23,7 @@ app.use(bodyparser.urlencoded({ extended: true}));
 app.use(
   cors({
     origin: "*", 
-    credentials: false,
+    credentials: true,
   })
 );
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -58,11 +58,13 @@ app.post('/user', async (req, res)=>{
 app.get('/post/:postId', async (req,res)=>{
   const postid=req.params.postId
   const post = await Post.findById({_id:postid})
+  console.log(post)
   res.json({post:post})
 })
 
 app.get('/', async (req, res) => {
 	const token = req.headers['x-access-token']
+  console.log(token);
 
 	try {
 		const decoded = jwt.verify(token, secret)
@@ -105,30 +107,26 @@ app.post('/login',  async (req,res) => {
   
 });
 
-app.post('/post', uploadMiddleware.single('file'), async (req,res)=>{
-  const {originalname,path} = req.file;
-  const parts = originalname.split('.');
-  const ext = parts[parts.length - 1];
-  const newPath = path+'.'+ext;
-  fs.renameSync(path, newPath);
-
-  const {title,summary,content,id} = req.body;
+app.post('/post', async (req,res)=>{
+  const {title,summary,content,id,image} = req.body;
   try {
-     Post.create({
+     const postDoc= await Post.create({
       id:id,
       title:title,
       summary:summary,
-      image:newPath,
+      image:image,
       content:content,}
     )
-    res.sendStatus(200).json({posted:true})
+    console.log(postDoc);
+     res.json({posted:true})
   } catch (error) {
-    res.sendStatus(400).json(error)
+     console.log(error)
   }
 })
 
 app.get('/post' , async (req, res)=>{
   const data=await Post.find()
+  console.log(data);
   res.json({status:"ok", posts:data})
 })
 
