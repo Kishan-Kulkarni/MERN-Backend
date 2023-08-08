@@ -124,7 +124,7 @@ app.post('/post', async (req,res)=>{
 })
 
 app.get('/post' , async (req, res)=>{
-  const data=await Post.find()
+  const data=await Post.find().lean()
   
   res.json({status:"ok", posts:data})
 })
